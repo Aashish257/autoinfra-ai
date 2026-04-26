@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      Role     @default(VIEWER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deployments Deployment[]
+}
+
+model Deployment {
+  id          String           @id @default(uuid())
+  name        String
+  status      DeploymentStatus @default(PENDING)
+  environment Environment      @default(STAGING)
+  imageTag    String
+  namespace   String           @default("default")
+  replicas    Int              @default(1)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  healingEvents HealingEvent[]
+  metrics       DeploymentMetric[]
+}
+
+model HealingEvent {
+  id           String      @id @default(uuid())
+  trigger      String      // e.g. "pod_crash", "high_cpu", "oom_killed"
+  action       String      // e.g. "restart_pod", "scale_up", "rollback"
+  status       HealStatus  @default(IN_PROGRESS)
+  resolvedAt   DateTime?
+  createdAt    DateTime    @default(now())
+
+  deploymentId String
+  deployment   Deployment  @relation(fields: [deploymentId], references: [id])
+}
+
+model DeploymentMetric {
+  id           String   @id @default(uuid())
+  cpuUsage     Float
+  memUsage     Float
+  podCount     Int
+  errorRate    Float
+  recordedAt   DateTime @default(now())
+
+  deploymentId String
+  deployment   Deployment @relation(fields: [deploymentId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  DEVELOPER
+  VIEWER
+}
+
+enum DeploymentStatus {
+  PENDING
+  RUNNING
+  FAILED
+  HEALING
+  ROLLED_BACK
+}
+
+enum Environment {
+  DEVELOPMENT
+  STAGING
+  PRODUCTION
+}
+
+enum HealStatus {
+  IN_PROGRESS
+  RESOLVED
+  FAILED
+}
