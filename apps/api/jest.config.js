@@ -1,11 +1,12 @@
-import type { JestConfigWithTsJest } from 'ts-jest';
-
-const jestConfig: JestConfigWithTsJest = {
+/** @type {import('ts-jest').JestConfigWithTsJest} */
+export default {
   preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
   testMatch: ['**/__tests__/**/*.test.ts'],
+  extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^@generated/(.*)$': '<rootDir>/src/generated/$1'
   },
   transform: {
     '^.+\\.tsx?$': [
@@ -15,7 +16,5 @@ const jestConfig: JestConfigWithTsJest = {
       },
     ],
   },
-  setupFilesAfterFramework: ['<rootDir>/src/__tests__/setup.ts'],
+  setupFilesAfterFramework: ['./src/__tests__/setup.ts'],
 };
-
-export default jestConfig;
