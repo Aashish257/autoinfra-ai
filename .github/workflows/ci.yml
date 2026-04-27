@@ -32,15 +32,18 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma Client
-        run: npx prisma generate --workspace=apps/api
+        run: npx prisma generate
+        working-directory: apps/api
         env:
           DATABASE_URL: postgresql://postgres:secret@localhost:5432/autoinfra_test
 
       - name: Type check API
-        run: npm run build --workspace=apps/api
+        run: npm run build
+        working-directory: apps/api
 
       - name: Type check Web
-        run: npm run build --workspace=apps/web
+        run: npm run build
+        working-directory: apps/web
 
   # ── Job 2: Run Tests ──────────────────────────────────────
   test:
@@ -94,12 +97,14 @@ jobs:
         run: npm ci
 
       - name: Run Prisma migrations
-        run: npx prisma migrate deploy --workspace=apps/api
+        run: npx prisma migrate deploy
+        working-directory: apps/api
         env:
           DATABASE_URL: ${{ env.DATABASE_URL }}
 
       - name: Run API tests
-        run: npm test --workspace=apps/api
+        run: npm test
+        working-directory: apps/api
         env:
           DATABASE_URL: ${{ env.DATABASE_URL }}
           REDIS_URL: ${{ env.REDIS_URL }}
