@@ -9,8 +9,8 @@ on:
 env:
   NODE_VERSION: '22'
   REGISTRY: docker.io
-  API_IMAGE: ${{ secrets.DOCKER_USERNAME || 'placeholder' }}/autoinfra-api
-  WEB_IMAGE: ${{ secrets.DOCKER_USERNAME || 'placeholder' }}/autoinfra-web
+  API_IMAGE: autoinfra-api
+  WEB_IMAGE: autoinfra-web
 
 jobs:
   # ── Job 1: Lint + Type Check ──────────────────────────────
@@ -145,8 +145,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ env.API_IMAGE }}
-            ${{ env.WEB_IMAGE }}
+            ${{ secrets.DOCKER_USERNAME }}/${{ env.API_IMAGE }}
+            ${{ secrets.DOCKER_USERNAME }}/${{ env.WEB_IMAGE }}
           tags: |
             type=sha,prefix=sha-
             type=ref,event=branch
@@ -158,7 +158,7 @@ jobs:
         with:
           context: ./apps/api
           push: ${{ secrets.DOCKER_USERNAME != '' }}
-          tags: ${{ env.API_IMAGE }}:${{ steps.meta.outputs.version }},${{ env.API_IMAGE }}:latest
+          tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           labels: ${{ steps.meta.outputs.labels }}
@@ -168,7 +168,7 @@ jobs:
         with:
           context: ./apps/web
           push: ${{ secrets.DOCKER_USERNAME != '' }}
-          tags: ${{ env.WEB_IMAGE }}:${{ steps.meta.outputs.version }},${{ env.WEB_IMAGE }}:latest
+          tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           labels: ${{ steps.meta.outputs.labels }}
