@@ -133,11 +133,13 @@ jobs:
 
       - name: Prepare Docker Image Names
         id: prep
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
         run: |
-          if [ -n "${{ secrets.DOCKER_USERNAME }}" ]; then
+          if [ -n "$DOCKER_USER" ]; then
             echo "push=true" >> $GITHUB_OUTPUT
-            echo "api_image=${{ secrets.DOCKER_USERNAME }}/autoinfra-api" >> $GITHUB_OUTPUT
-            echo "web_image=${{ secrets.DOCKER_USERNAME }}/autoinfra-web" >> $GITHUB_OUTPUT
+            echo "api_image=$DOCKER_USER/autoinfra-api" >> $GITHUB_OUTPUT
+            echo "web_image=$DOCKER_USER/autoinfra-web" >> $GITHUB_OUTPUT
           else
             echo "push=false" >> $GITHUB_OUTPUT
             echo "api_image=autoinfra-api" >> $GITHUB_OUTPUT
