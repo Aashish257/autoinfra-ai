@@ -131,6 +131,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Prepare Docker Image Names
+        id: prep
+        run: |
+          if [ -n "${{ secrets.DOCKER_USERNAME }}" ]; then
+            echo "push=true" >> $GITHUB_OUTPUT
+            echo "api_image=${{ secrets.DOCKER_USERNAME }}/autoinfra-api" >> $GITHUB_OUTPUT
+            echo "web_image=${{ secrets.DOCKER_USERNAME }}/autoinfra-web" >> $GITHUB_OUTPUT
+          else
+            echo "push=false" >> $GITHUB_OUTPUT
+            echo "api_image=autoinfra-api" >> $GITHUB_OUTPUT
+            echo "web_image=autoinfra-web" >> $GITHUB_OUTPUT
+          fi
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -145,8 +158,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ secrets.DOCKER_USERNAME }}/${{ env.API_IMAGE }}
-            ${{ secrets.DOCKER_USERNAME }}/${{ env.WEB_IMAGE }}
+            ${{ steps.prep.outputs.api_image }}
+            ${{ steps.prep.outputs.web_image }}
           tags: |
             type=sha,prefix=sha-
             type=ref,event=branch
@@ -157,7 +170,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./apps/api
-          push: ${{ secrets.DOCKER_USERNAME != '' }}
+          push: ${{ steps.prep.outputs.push == 'true' }}
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -167,7 +180,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./apps/web
-          push: ${{ secrets.DOCKER_USERNAME != '' }}
+          push: ${{ steps.prep.outputs.push == 'true' }}
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
