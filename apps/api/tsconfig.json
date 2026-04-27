@@ -11,6 +11,10 @@
     "target": "esnext",
     "lib": ["esnext"],
     "types": ["node", "jest"],
+    "baseUrl": ".",
+    "paths": {
+      "@generated/*": ["./src/generated/*"]
+    },
 
     // Other Outputs
     "sourceMap": true,
