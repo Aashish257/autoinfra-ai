@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
   REGISTRY: docker.io
   API_IMAGE: ${{ secrets.DOCKER_USERNAME }}/autoinfra-api
   WEB_IMAGE: ${{ secrets.DOCKER_USERNAME }}/autoinfra-web
