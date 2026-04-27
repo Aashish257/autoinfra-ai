@@ -9,8 +9,8 @@ on:
 env:
   NODE_VERSION: '22'
   REGISTRY: docker.io
-  API_IMAGE: ${{ secrets.DOCKER_USERNAME }}/autoinfra-api
-  WEB_IMAGE: ${{ secrets.DOCKER_USERNAME }}/autoinfra-web
+  API_IMAGE: ${{ secrets.DOCKER_USERNAME || 'placeholder' }}/autoinfra-api
+  WEB_IMAGE: ${{ secrets.DOCKER_USERNAME || 'placeholder' }}/autoinfra-web
 
 jobs:
   # ── Job 1: Lint + Type Check ──────────────────────────────
@@ -157,7 +157,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./apps/api
-          push: true
+          push: ${{ secrets.DOCKER_USERNAME != '' }}
           tags: ${{ env.API_IMAGE }}:${{ steps.meta.outputs.version }},${{ env.API_IMAGE }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -167,7 +167,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./apps/web
-          push: true
+          push: ${{ secrets.DOCKER_USERNAME != '' }}
           tags: ${{ env.WEB_IMAGE }}:${{ steps.meta.outputs.version }},${{ env.WEB_IMAGE }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
