@@ -1,0 +1,20 @@
+{
+  "preset": "ts-jest/presets/default-esm",
+  "testEnvironment": "node",
+  "testMatch": ["**/__tests__/**/*.test.ts"],
+  "extensionsToTreatAsEsm": [".ts"],
+  "resolver": "./jest.resolver.cjs",
+  "transform": {
+    "^.+\\.tsx?$": [
+      "ts-jest",
+      {
+        "useESM": true,
+        "tsconfig": "tsconfig.json",
+        "diagnostics": false
+      }
+    ]
+  },
+  "setupFilesAfterFramework": ["<rootDir>/src/__tests__/setup.ts"],
+  "forceExit": true,
+  "detectOpenHandles": true
+}
