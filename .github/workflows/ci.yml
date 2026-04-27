@@ -42,6 +42,8 @@ jobs:
       - name: Generate Prisma Client
         run: npx prisma generate
         working-directory: apps/api
+        env:
+          DATABASE_URL: postgresql://postgres:secret@localhost:5432/autoinfra_test
 
       - name: Type check API
         run: npx tsc --noEmit
