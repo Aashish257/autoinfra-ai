@@ -1,0 +1,42 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  validate:
+    name: Validate PR
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install deps
+        run: |
+          npm ci
+          npm ci --prefix apps/api
+          npm ci --prefix apps/web
+
+      - name: Type check
+        run: |
+          cd apps/api && npx tsc --noEmit
+          cd ../web && npx tsc --noEmit
+
+      - name: Check no .env files committed
+        run: |
+          if find . -name ".env" -not -path "*/node_modules/*" | grep -q .; then
+            echo "ERROR: .env file found in repo"
+            exit 1
+          fi
+
+      - name: Check Dockerfile exists
+        run: |
+          test -f apps/api/Dockerfile || (echo "API Dockerfile missing" && exit 1)
+          test -f apps/web/Dockerfile || (echo "Web Dockerfile missing" && exit 1)
