@@ -96,6 +96,12 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Generate Prisma Client
+        run: npx prisma generate
+        working-directory: apps/api
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+
       - name: Run Prisma migrations
         run: npx prisma migrate deploy
         working-directory: apps/api
