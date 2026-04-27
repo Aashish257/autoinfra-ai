@@ -1,5 +1,10 @@
 const { pathsToModuleNameMapper } = require('ts-jest');
-const { compilerOptions } = require('./tsconfig.json');
+const fs = require('fs');
+
+// Safely parse tsconfig.json by stripping comments
+const tsconfigContent = fs.readFileSync('./tsconfig.json', 'utf8');
+const cleanConfig = tsconfigContent.replace(/\/\/.*|\/\*[\s\S]*?\*\//g, '');
+const { compilerOptions } = JSON.parse(cleanConfig);
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
