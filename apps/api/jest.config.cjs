@@ -7,10 +7,8 @@ module.exports = {
   testMatch: ['**/__tests__/**/*.test.ts'],
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
-    // Handle ESM imports with .js extensions
+    // Map .js imports to the local directory
     '^(\\.\\.?/.*)\\.js$': '$1',
-    // Explicitly handle Prisma generated client
-    '^../generated/prisma/client\\.js$': path.resolve(__dirname, './src/generated/prisma/client.ts'),
   },
   transform: {
     '^.+\\.tsx?$': [
@@ -18,11 +16,13 @@ module.exports = {
       {
         useESM: true,
         tsconfig: 'tsconfig.json',
+        diagnostics: false,
       },
     ],
   },
+  // Use a custom resolver to handle the ESM .js -> .ts mapping reliably
+  resolver: path.resolve(__dirname, 'jest.resolver.cjs'),
   setupFilesAfterFramework: ['<rootDir>/src/__tests__/setup.ts'],
-  // Add this to prevent the "torn down" error by ensuring Jest waits for all handles
   forceExit: true,
   detectOpenHandles: true,
 };
