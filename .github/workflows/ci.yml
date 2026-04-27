@@ -133,18 +133,10 @@ jobs:
 
       - name: Prepare Docker Image Names
         id: prep
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
         run: |
-          if [ -n "$DOCKER_USER" ]; then
-            echo "push=true" >> $GITHUB_OUTPUT
-            echo "api_image=$DOCKER_USER/autoinfra-api" >> $GITHUB_OUTPUT
-            echo "web_image=$DOCKER_USER/autoinfra-web" >> $GITHUB_OUTPUT
-          else
-            echo "push=false" >> $GITHUB_OUTPUT
-            echo "api_image=autoinfra-api" >> $GITHUB_OUTPUT
-            echo "web_image=autoinfra-web" >> $GITHUB_OUTPUT
-          fi
+          echo "push=true" >> $GITHUB_OUTPUT
+          echo "api_image=Aashish257/autoinfra-api" >> $GITHUB_OUTPUT
+          echo "web_image=Aashish257/autoinfra-web" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
