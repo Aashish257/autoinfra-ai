@@ -193,6 +193,7 @@ jobs:
     steps:
       - name: Trigger Jenkins deploy job
         run: |
-          curl -X POST "${{ secrets.JENKINS_URL }}/job/autoinfra-deploy/build" \
+          echo "Triggering Jenkins for tag: ${{ needs.build.outputs.image_tag }}"
+          curl -X POST "${{ secrets.JENKINS_URL }}/job/autoinfra-deploy/buildWithParameters?IMAGE_TAG=${{ needs.build.outputs.image_tag }}" \
             --user "${{ secrets.JENKINS_USER }}:${{ secrets.JENKINS_TOKEN }}" \
-            --data-urlencode json='{"parameter": [{"name":"IMAGE_TAG", "value":"${{ needs.build.outputs.image_tag }}"}]}'
+            --silent --show-error --fail
