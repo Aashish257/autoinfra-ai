@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "test": "jest --forceExit --detectOpenHandles1",
+    "test": "jest --forceExit --detectOpenHandles",
     "dev": "nodemon --watch src --exec tsx src/index.ts",
     "test:watch": "jest --watch",
     "build": "tsc",
